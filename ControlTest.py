@@ -1,5 +1,5 @@
 import sys, tty, termios
-from DynamixelControl import Control
+from DynamixelControl import DynamixelControl
 
 fd = sys.stdin.fileno()
 old_settings = termios.tcgetattr(fd)
@@ -18,7 +18,7 @@ dxl_goal_position = [DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE]
 
 ids = [2, 3, 4, 5, 6, 7]
 
-dc = Control(DXL_ids = ids, verbose=False)
+dc = DynamixelControl(DXL_ids = ids, verbose=False)
 
 while 1:
     print("Press any key to continue! (or press ESC to quit!)")

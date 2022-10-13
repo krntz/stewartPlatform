@@ -1,6 +1,6 @@
 from dynamixel_sdk import *                    # Uses Dynamixel SDK library
 
-class Control:
+class DynamixelControl:
     def __init__(self,
                  DXL_ids, 
                  verbose=False,
