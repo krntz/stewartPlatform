@@ -46,6 +46,18 @@ while 1:
         del dc
         break
 
+    # Wait until servos have stopped moving
+    while 1:
+        moving = []
+        for i in goal_positions:
+            moving_status = dc.get_moving_status(i['id'])
+            print(moving_status)
+
+            moving.append(moving_status)
+
+        if not all(moving):
+            break
+
     # Change goal position
     if index == 0:
         index = 1

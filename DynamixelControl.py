@@ -8,23 +8,25 @@ class Control:
                  deviceName="/dev/tty.usbserial-FT66WMA5", 
                  protocol_version=1.0):
 
-        self.DXL_ids                    = DXL_ids
-        self.VERBOSE = verbose
+        self.DXL_ids                        = DXL_ids
+        self.VERBOSE                        = verbose
 
         # Control table address
-        self.ADDR_MX_TORQUE_ENABLE      = 24
-        self.ADDR_MX_GOAL_POSITION      = 30
-        self.ADDR_MX_PRESENT_POSITION   = 36
+        self.ADDR_MX_TORQUE_ENABLE          = 24
+        self.ADDR_MX_GOAL_POSITION          = 30
+        self.ADDR_MX_PRESENT_POSITION       = 36
+        self.ADDR_DXL_MOVING_STATYS         = 46
         
         # Data Byte Length
-        self.LEN_MX_GOAL_POSITION       = 4
-        self.LEN_MX_PRESENT_POSITION    = 2
+        self.LEN_MX_GOAL_POSITION           = 4
+        self.LEN_MX_PRESENT_POSITION        = 2
         
-        self.TORQUE_ENABLE               = 1                 # Value for enabling the torque
-        self.TORQUE_DISABLE              = 0                 # Value for disabling the torque
-        self.DXL_MINIMUM_POSITION_VALUE  = 204
-        self.DXL_MAXIMUM_POSITION_VALUE  = 820
-        self.DXL_MOVING_STATUS_THRESHOLD = 20                # Dynamixel moving status threshold
+        # Values
+        self.TORQUE_ENABLE                  = 1                 # Value for enabling the torque
+        self.TORQUE_DISABLE                 = 0                 # Value for disabling the torque
+        self.DXL_MINIMUM_POSITION_VALUE     = 204
+        self.DXL_MAXIMUM_POSITION_VALUE     = 820
+        self.DXL_MOVING_STATUS_THRESHOLD    = 20                # Dynamixel moving status threshold
 
         # Initialize PortHandler instance
         self.portHandler = PortHandler(deviceName)
@@ -118,19 +120,15 @@ class Control:
     
         # Clear syncwrite parameter storage
         groupSyncWrite.clearParam()
-    
+
+    def get_moving_status(self, servoID):
         # Wait until servos have stopped moving
-        while 1:
-            moving = []
-            # Read present position
-            for i in goal_positions:
-                dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, i["id"], self.ADDR_MX_PRESENT_POSITION)
-                if dxl_comm_result != COMM_SUCCESS:
-                    print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-                elif dxl_error != 0:
-                    print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-    
-                moving.append(abs(i["position"] - dxl_present_position) > self.DXL_MOVING_STATUS_THRESHOLD)
-    
-            if not all(moving):
-                break
+
+        dxl_moving_status, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, servoID, 46)
+
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+        return dxl_moving_status
