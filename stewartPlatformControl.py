@@ -1,5 +1,16 @@
 import KeyPoller
 
+# all measurements in mm and degrees
+d = 20 # Length of rod
+h = 25.5 # Distance between servo shaft and servo horn anchor
+alpha_k = 0 # Angle of h
+
+base_radius = 75
+base_anchors = []
+
+platform_radius = 
+platform_anchors = []
+
 with KeyPoller.KeyPoller() as keyPoller:
     while True:
         c = keyPoller.poll()
@@ -7,13 +18,13 @@ with KeyPoller.KeyPoller() as keyPoller:
             if c == "c":
                 break
             if c == "w":
-                print("north")
+                print("translate north")
             if c == "a":
-                print("west")
+                print("translate west")
             if c == "s":
-                print("south")
+                print("translate south")
             if c == "d":
-                print("east")
+                print("translate east")
             if c == "q":
                 print("yaw west")
             if c == "e":
