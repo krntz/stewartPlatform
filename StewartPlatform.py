@@ -57,20 +57,20 @@ class StewartPlatform:
                                          4*np.pi/3 - anchorAngleBase,
                                          4*np.pi/3 + anchorAngleBase])
 
+        #self.polarCoordsBase = self.polarCoordsBase + np.repeat(self.platform_rot, 6)
         if verbose:
             print("---polarCoordsBase---")
             print(self.polarCoordsBase)
             print()
 
-        # might need to change the order as per https://github.com/Yeok-c/Stewart_Py/blob/main/01_Stewart_Py_Inverse_Kinematics.ipynb
-        self.polarCoordsPlatform = np.array([4*np.pi/3 + anchorAnglePlatform,
-                                             -anchorAnglePlatform,
+        self.polarCoordsPlatform = np.array([-anchorAnglePlatform,
                                              anchorAnglePlatform,
                                              2*np.pi/3 - anchorAnglePlatform,
                                              2*np.pi/3 + anchorAnglePlatform,
-                                             4*np.pi/3 - anchorAnglePlatform])
+                                             4*np.pi/3 - anchorAnglePlatform,
+                                             4*np.pi/3 + anchorAnglePlatform])
 
-        self.polarCoordsPlatform = self.polarCoordsPlatform + np.repeat(self.platform_rot, 6)
+        #self.polarCoordsPlatform = self.polarCoordsPlatform + np.repeat(self.platform_rot, 6)
 
         if verbose:
             print("---polarCoordsPlatform---")
@@ -151,6 +151,10 @@ class StewartPlatform:
 
         for i in range(6):
             f = 2 * self.servoHornLength * (np.cos(self.servoOffsetRotation[i]) * legPositions[0, i] + np.sin(self.servoOffsetRotation[i]) * legPositions[1, i])
-            servoAngles.append(np.arcsin(g[i] / np.sqrt(e[i]**2 + f**2)) - np.arctan2(f, e[i]))
+            angle = np.arcsin(g[i] / np.sqrt(e[i]**2 + f**2)) - np.arctan2(f, e[i])
+            if np.isnan(angle):
+                raise ValueError("Wanted position cannot be achieved!")
+            else:
+                servoAngles.append(angle)
 
         return servoAngles

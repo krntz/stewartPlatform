@@ -1,44 +1,58 @@
 import KeyPoller
+import numpy as np
+import time
+from StewartPlatform import StewartPlatform
+from DynamixelControl import DynamixelControl
 
-# all measurements in mm and degrees
-d = 20 # Length of rod
-h = 25.5 # Distance between servo shaft and servo horn anchor
-alpha_k = 0 # Angle of h
+s = StewartPlatform(75, 75, 25.5, 85, 0.229, 0.229, np.radians(60))
 
-base_radius = 75
-base_anchors = []
+servo_ids = [2, 3, 4, 5, 6, 7]
+dc = DynamixelControl(servo_ids)
 
-platform_radius = 
-platform_anchors = []
+trans = np.array([0, 0, 0])
+rot = np.array([0, 0, 0])
 
 with KeyPoller.KeyPoller() as keyPoller:
     while True:
+        new_trans = trans
+        new_rot = rot
         c = keyPoller.poll()
         if not c is None:
             if c == "c":
                 break
             if c == "w":
-                print("translate north")
+                new_trans += np.array([1, 0, 0])
             if c == "a":
-                print("translate west")
+                new_trans -= np.array([0, 1, 0])
             if c == "s":
-                print("translate south")
+                new_trans -= np.array([1, 0, 0])
             if c == "d":
-                print("translate east")
+                new_trans += np.array([0, 1, 0])
             if c == "q":
-                print("yaw west")
+                new_rot -= np.array([0, 0, 1])
             if c == "e":
-                print("yaw east")
+                new_rot += np.array([0, 0, 1])
             if c == "r":
-                print("rise")
+                new_trans += np.array([0, 0, 1])
             if c == "f":
-                print("fall")
+                new_trans -= np.array([0, 0, 1])
             if c == "i":
-                print("pitch down")
+                new_rot -= np.array([1, 0, 0])
             if c == "k":
-                print("pitch up")
+                new_rot += np.array([1, 0, 0])
             if c == "j":
-                print("roll west")
+                new_rot -= np.array([0, 1, 0])
             if c == "l":
-                print("roll east")
+                new_rot += np.array([0, 1, 0])
 
+        try:
+            servo_angles = np.rad2deg(s.calculate_servo_angles(new_trans, np.deg2rad(new_rot)))
+            goal_positions = [{"id" : servo_ids[i], "degrees" : j} for i, j in enumerate(servo_angles)]
+            dc.move_degrees(goal_positions)
+        except ValueError as ve:
+            print(ve)
+        else:
+            trans = new_trans
+            rot = new_rot
+
+        print(trans, rot)
