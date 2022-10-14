@@ -18,11 +18,21 @@ dxl_goal_position = [DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE]
 
 ids = [2, 3, 4, 5, 6, 7]
 
-dc = DynamixelControl(DXL_ids = ids, verbose=False)
+dc = DynamixelControl(DXL_ids = ids, verbose=True)
 
+degrees = [{"id" : i, "degrees" : 90} for i in ids]
+
+dc.move_degrees(degrees)
+while 1:
+    moving = dc.get_moving_status()
+    if not all(moving):
+        break
+
+"""
 while 1:
     print("Press any key to continue! (or press ESC to quit!)")
     if getch() == chr(0x1b):
+        del dc
         break
 
     goal_positions = []
@@ -48,13 +58,7 @@ while 1:
 
     # Wait until servos have stopped moving
     while 1:
-        moving = []
-        for i in goal_positions:
-            moving_status = dc.get_moving_status(i['id'])
-            print(moving_status)
-
-            moving.append(moving_status)
-
+        moving = dc.get_moving_status()
         if not all(moving):
             break
 
@@ -63,3 +67,4 @@ while 1:
         index = 1
     else:
         index = 0
+"""
