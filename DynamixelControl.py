@@ -1,4 +1,5 @@
 from dynamixel_sdk import *                    # Uses Dynamixel SDK library
+import math
 
 class DynamixelControl:
     def __init__(self,
@@ -15,7 +16,7 @@ class DynamixelControl:
         self.ADDR_MX_TORQUE_ENABLE          = 24
         self.ADDR_MX_GOAL_POSITION          = 30
         self.ADDR_MX_PRESENT_POSITION       = 36
-        self.ADDR_MX_MOVING_STATUS         = 46
+        self.ADDR_MX_MOVING_STATUS          = 46
         
         # Data Byte Length
         self.LEN_MX_GOAL_POSITION           = 4
@@ -27,6 +28,9 @@ class DynamixelControl:
         self.DXL_MINIMUM_POSITION_VALUE     = 204
         self.DXL_MAXIMUM_POSITION_VALUE     = 820
         self.DXL_DEGREES_PER_STEP           = 0.29              # Value for converting between servo steps and degrees
+                                                                # TODO: This being a float means the movements will always be slightly off
+                                                                #           - The servos cannot move fractions of steps
+                                                                #           - Check if the error is large enough to matter and if there some way to fix it
 
         # Initialize PortHandler instance
         self.portHandler = PortHandler(deviceName)
@@ -176,7 +180,7 @@ class DynamixelControl:
 
         current_positions = self.get_current_positions()
 
-        goal_positions = [{"id" : j["id"], "position" : int(j["degrees"] / 0.30) + current_positions[i]["position"]} for i,j in enumerate(degrees)]
+        goal_positions = [{"id" : j["id"], "position" : int(j["degrees"] / self.DXL_DEGREES_PER_STEP) + 512} for i,j in enumerate(degrees)]
         
         self.sync_write(goal_positions)
 
