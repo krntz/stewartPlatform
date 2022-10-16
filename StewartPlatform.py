@@ -2,6 +2,10 @@
 
 import numpy as np
 
+class Leg:
+    def __init__(self):
+
+
 class StewartPlatform:
     def __init__(self, 
                  radiusBase, 
@@ -35,7 +39,7 @@ class StewartPlatform:
 
         # offset rotation of servo shafts in radians
         # the hexagonal base is circumscribed with a circle, with each servo shaft being a single point on the circle
-        # beta[i] denotes how far around the circle the servo shaft is
+        # servoOffsetRotation[i] denotes how far around the circle the servo shaft is
         self.servoOffsetRotation = np.array([np.pi/2 + np.pi, 
                                              np.pi/2,
                                              2*np.pi/3 + np.pi/2 + np.pi, 
@@ -77,9 +81,9 @@ class StewartPlatform:
             print(self.polarCoordsPlatform)
             print()
 
-        # Calculate cartesian coordinates of servo shafts
+        # Calculate cartesian coordinates of legs
 
-        # Base
+        # On Base
         self.cartesianCoordsBase = radiusBase * np.array([[np.cos(x), np.sin(x), 0] for x in self.polarCoordsBase])
         self.cartesianCoordsBase = np.transpose(self.cartesianCoordsBase)
 
@@ -88,7 +92,7 @@ class StewartPlatform:
             print(self.cartesianCoordsBase)
             print()
 
-        # Platform
+        # On Platform
         self.cartesianCoordsPlatform = radiusPlatform * np.array([[np.cos(x), np.sin(x), 0] for x in self.polarCoordsPlatform])
         self.cartesianCoordsPlatform = np.transpose(self.cartesianCoordsPlatform)
 
