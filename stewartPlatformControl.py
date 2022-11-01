@@ -10,6 +10,7 @@ import time
 def update_servos(new_trans, new_rot):
     try:
         servo_angles = np.rad2deg(s.calculate_servo_angles(new_trans, np.deg2rad(new_rot)))
+        print(servo_angles)
         goal_positions = [{"id" : servo_ids[i], "degrees" : j} for i, j in enumerate(servo_angles)]
         dc.move_degrees(goal_positions)
     except ValueError as ve:
@@ -20,13 +21,16 @@ def update_servos(new_trans, new_rot):
     print(trans, rot)
     return trans, rot
 
-s = StewartPlatform(100.089, 63, 26.5, 120, 0.229, 0.229, np.radians(60))
+s = StewartPlatform(100.089, 50, 26.5, 120, 0.229, 0.229, np.radians(60), verbose=True)
 
 servo_ids = [2, 3, 4, 5, 6, 7]
 dc = DynamixelControl(servo_ids)
 
 trans = np.array([0, 0, 0])
 rot = np.array([0, 0, 0])
+
+# move servos to home position
+update_servos(trans, rot)
 
 move_speed = 10
 
