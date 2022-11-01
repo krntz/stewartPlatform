@@ -36,6 +36,9 @@ class StewartPlatform:
         # offset rotation of servo shafts in radians
         # the hexagonal base is circumscribed with a circle, with each servo shaft being a single point on the circle
         # beta[i] denotes how far around the circle the servo shaft is
+
+        # TODO:
+        # - Simplify these angles to be based on 0, 120, 240 degrees rotation
         self.servoOffsetRotation = np.array([np.pi/2 + np.pi, 
                                              np.pi/2,
                                              2*np.pi/3 + np.pi/2 + np.pi, 
@@ -98,6 +101,8 @@ class StewartPlatform:
             print()
 
         # Define home position of platform
+        # TODO:
+        # - For some reason this sets the home position to ~19 degrees too high
         z = np.sqrt(self.rodLength**2 + self.servoHornLength**2 - (self.cartesianCoordsPlatform[0] - self.cartesianCoordsBase[0])**2 - (self.cartesianCoordsPlatform[1] - self.cartesianCoordsBase[1])**2)
         self.home_pos = np.array([0, 0, z[0]])
         
@@ -156,10 +161,16 @@ class StewartPlatform:
 
         for i in range(6):
             f = 2 * self.servoHornLength * (np.cos(self.servoOffsetRotation[i]) * legPositions[0, i] + np.sin(self.servoOffsetRotation[i]) * legPositions[1, i])
-            angle = np.arcsin(g[i] / np.sqrt(e[i]**2 + f**2)) - np.arctan2(f, e[i])
-            if np.isnan(angle):
+
+            # TODO:
+            # - This prevents catastrophic failure when the wanted position is impossible but it's not specific enough
+            # - - The problem likely originates in calculate_leg_lengths() and should be checked for there, however I am unsure of which variable is the problem
+            x = g[i] / np.sqrt(e[i]**2 + f**2)
+            print(x)
+            if x > 1.0 or x < -1.0:
                 raise ValueError("Wanted position cannot be achieved!")
             else:
+                angle = np.arcsin(x) - np.arctan2(f, e[i])
                 servoAngles.append(angle)
 
         return servoAngles
