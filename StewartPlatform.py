@@ -100,6 +100,11 @@ class StewartPlatform:
         # Define home position of platform
         z = np.sqrt(self.rodLength**2 + self.servoHornLength**2 - (self.cartesianCoordsPlatform[0] - self.cartesianCoordsBase[0])**2 - (self.cartesianCoordsPlatform[1] - self.cartesianCoordsBase[1])**2)
         self.home_pos = np.array([0, 0, z[0]])
+        
+        if verbose:
+            print("---home_pos---")
+            print(self.home_pos)
+            print()
 
     # Standard rotation matrices
     def rotX(self, rot):
