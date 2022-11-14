@@ -166,7 +166,6 @@ class StewartPlatform:
             # - This prevents catastrophic failure when the wanted position is impossible but it's not specific enough
             # - - The problem likely originates in calculate_leg_lengths() and should be checked for there, however I am unsure of which variable is the problem
             x = g[i] / np.sqrt(e[i]**2 + f**2)
-            print(x)
             if x > 1.0 or x < -1.0:
                 raise ValueError("Wanted position cannot be achieved!")
             else:

@@ -169,6 +169,9 @@ class DynamixelControl:
 
         return current_positions
 
+    # TODO:
+    # - Implement interpolation for smoother movements
+
     def move_degrees(self, degrees):
         """Moves connected servos by indicated number of degrees.
 
