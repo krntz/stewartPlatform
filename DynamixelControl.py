@@ -4,9 +4,9 @@ import math
 class DynamixelControl:
     def __init__(self,
                  DXL_ids, 
+                 deviceName, 
                  verbose=False,
-                 baudrate=1000000, 
-                 deviceName="/dev/tty.usbserial-FT66WMA5", 
+                 baudrate=1000000,  
                  protocol_version=1.0):
 
         self.DXL_ids                        = DXL_ids

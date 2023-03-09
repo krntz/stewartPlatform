@@ -22,7 +22,7 @@ def update_servos(new_trans, new_rot):
 s = StewartPlatform(100.089, 50, 26.5, 120, 0.229, 0.229, np.radians(60), verbose=False)
 
 servo_ids = [2, 3, 4, 5, 6, 7]
-dc = DynamixelControl(servo_ids)
+dc = DynamixelControl(DXL_ids=servo_ids, deviceName="COM3")
 
 trans = np.array([0, 0, 0])
 rot = np.array([0, 0, 0])
